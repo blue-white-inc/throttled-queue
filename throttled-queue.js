@@ -77,8 +77,13 @@
         /**
          * Return a function that can enqueue items.
          */
-        return function(callback) {
-            queue.push(callback);
+        return  {
+            queue: function(callback) {
+                queue.push(callback);
+            },
+            shutdown: function() {
+                clearTimeout(timeout);
+            },
         };
     };
 
