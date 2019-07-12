@@ -25,7 +25,6 @@
      * @returns {Function}
      */
     var throttledQueue = function(max_requests_per_interval, interval, evenly_spaced) {
-
         /**
          * If all requests should be evenly spaced, adjust to suit.
          */
@@ -51,6 +50,11 @@
             var threshold = last_called + interval;
             var now = Date.now();
 
+            if (shutdown) {
+                clearTimeout(timeout);
+                return;
+            }
+
             /**
              * Adjust the timer if it was called too early.
              */
@@ -73,6 +77,7 @@
          * Kick off the timer.
          */
         var timeout = setTimeout(dequeue, interval);
+        var shutdown = false;
 
         /**
          * Return a function that can enqueue items.
@@ -83,6 +88,7 @@
             },
             shutdown: function() {
                 clearTimeout(timeout);
+                shutdown = true;
             },
         };
     };
