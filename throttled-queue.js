@@ -41,6 +41,7 @@
         var queue = [];
         var lastCalled = Date.now();
         var timeout;
+        var shutdown = false;
 
         /**
          * Gets called at a set interval to remove items from the queue.
