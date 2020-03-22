@@ -41,7 +41,7 @@
         var queue = [];
         var lastCalled = Date.now();
         var timeout;
-        var shutdown = false;
+        var requestShutdown = false;
 
         /**
          * Gets called at a set interval to remove items from the queue.
@@ -53,7 +53,7 @@
             var threshold = lastCalled + interval;
             var now = Date.now();
 
-            if (shutdown) {
+            if (requestShutdown) {
                 if (timeout) {
                     clearTimeout(timeout);
                     timeout = null;
@@ -76,7 +76,7 @@
             }
 
             lastCalled = Date.now();
-            if (queue.length) {
+            if (queue.length && !requestShutdown) {
                 timeout = setTimeout(dequeue, interval);
             } else {
                 clearTimeout(timeout);
@@ -90,14 +90,14 @@
         return  {
             queue: function enqueue(callback) {
                 queue.push(callback);
-                if (!timeout) {
+                if (!timeout && !requestShutdown) {
                     timeout = setTimeout(dequeue, interval);
                 }
             },
             shutdown: function shutdown() {
                 clearTimeout(timeout);
                 timeout = null;
-                shutdown = true;
+                requestShutdown = true;
             },
         };
     };
